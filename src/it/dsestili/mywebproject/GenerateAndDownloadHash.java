@@ -22,6 +22,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -240,17 +241,32 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 			fos = new FileOutputStream(temp);
 			bos = new BufferedOutputStream(fos);
 
-			for(File currentFile : files)
+			for(File f : files)
 			{
-				logger.debug("Sto generando l'hash code del file " + currentFile.getName());
+				logger.debug("Sto generando l'hash code del file " + f.getName());
+
+				String lineOfText = null;
+				try
+				{
+					Core core = new Core(f, algorithm);
+					core.addIProgressListener(this);
+					String hash = core.generateHash();
+
+					lineOfText = hash + " *" + (recursive ? f.getAbsolutePath() : f.getName()) + "\n";
+				}
+				catch(FileNotFoundException e)
+				{
+					lineOfText = "Warning: " + e.getMessage() + "\n";
+					logger.debug(e);
+				}
+				catch(IOException e)
+				{
+					lineOfText = "Warning: " + e.getMessage() + "\n";
+					logger.debug(e);
+				}
 				
-				Core core = new Core(currentFile, algorithm);
-				core.addIProgressListener(this);
-				String hash = core.generateHash();
-				
-				String lineOfText = hash + " *" + (recursive ? currentFile.getAbsolutePath() : currentFile.getName()) + "\n";
 				byte[] data = lineOfText.getBytes("UTF-8");
-				
+
 				bos.write(data);
 			}
 			
