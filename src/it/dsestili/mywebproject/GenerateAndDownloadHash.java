@@ -45,7 +45,7 @@ import it.dsestili.jhashcode.core.IProgressListener;
 import it.dsestili.jhashcode.core.IScanProgressListener;
 import it.dsestili.jhashcode.core.ProgressEvent;
 import it.dsestili.jhashcode.core.Utils;
-import it.dsestili.jhashcode.gui.MainWindow;
+import it.dsestili.jhashcode.ui.MainWindow;
 
 /**
  * Servlet implementation class GenerateAndDownloadHash
