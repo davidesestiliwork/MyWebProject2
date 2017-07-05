@@ -59,6 +59,7 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 	private static final String PROP_FILE_NAME = "config.properties";
 	private static final String FOLDER = "folder";
 	private static final String ALGORITHM = "algorithm";
+	private static final String WARNING_MESSAGE = "Warning: ";
 	
 	private String algorithm;
 	private boolean recursive;
@@ -256,12 +257,12 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 				}
 				catch(FileNotFoundException e)
 				{
-					lineOfText = "Warning: " + e.getMessage() + "\n";
+					lineOfText = WARNING_MESSAGE + e.getMessage() + "\n";
 					logger.debug(e);
 				}
 				catch(IOException e)
 				{
-					lineOfText = "Warning: " + e.getMessage() + "\n";
+					lineOfText = WARNING_MESSAGE + e.getMessage() + "\n";
 					logger.debug(e);
 				}
 				
