@@ -61,8 +61,8 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 	private static final String ALGORITHM = "algorithm";
 	private static final String WARNING_MESSAGE = "Warning: ";
 	
-	private String algorithm;
-	private boolean recursive;
+	protected String algorithm;
+	protected boolean recursive;
 	
     /**
      * @see HttpServlet#HttpServlet()
