@@ -141,6 +141,8 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 			return;
 		}
 
+		logger.debug("Mode: " + modeParam);
+
 		DirectoryScanner scanner = null;
 
 		if(modeParam != null && modeParam.trim().equals("not-recursive"))
