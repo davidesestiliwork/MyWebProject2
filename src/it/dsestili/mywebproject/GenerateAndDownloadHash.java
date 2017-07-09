@@ -225,6 +225,13 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 		return data;
 	}
 
+	protected File getTempFile() throws IOException
+	{
+		String tempFolderPath = System.getProperty("jboss.server.temp.dir");
+		File temp = File.createTempFile("tempfile", ".tmp", new File(tempFolderPath));
+		return temp;
+	}
+	
 	//genera un file temporaneo contenente gli hash code ed i relativi nomi di file
 	//a partire dall'elenco dei file contenuti nella cartella
 	protected File generateTempFile(File[] files)
@@ -236,8 +243,7 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 		
 		try 
 		{
-			String tempFolderPath = System.getProperty("jboss.server.temp.dir");
-			temp = File.createTempFile("tempfile", ".tmp", new File(tempFolderPath));
+			temp = getTempFile();
 			
 			fos = new FileOutputStream(temp);
 			bos = new BufferedOutputStream(fos);
