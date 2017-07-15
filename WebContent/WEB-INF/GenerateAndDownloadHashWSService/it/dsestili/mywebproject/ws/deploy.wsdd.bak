@@ -1,0 +1,54 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from GenerateAndDownloadHashWSService WSDL service -->
+
+  <service name="GenerateAndDownloadHashWS" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://ws.mywebproject.dsestili.it"/>
+      <parameter name="wsdlServiceElement" value="GenerateAndDownloadHashWSService"/>
+      <parameter name="schemaQualified" value="http://ws.mywebproject.dsestili.it"/>
+      <parameter name="wsdlServicePort" value="GenerateAndDownloadHashWS"/>
+      <parameter name="className" value="it.dsestili.mywebproject.ws.GenerateAndDownloadHashWSSoapBindingImpl"/>
+      <parameter name="wsdlPortType" value="GenerateAndDownloadHashWS"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation name="generateAndDownloadHash" qname="operNS:generateAndDownloadHash" xmlns:operNS="http://ws.mywebproject.dsestili.it" returnQName="retNS:generateAndDownloadHashReturn" xmlns:retNS="http://ws.mywebproject.dsestili.it" returnType="rtns:Result" xmlns:rtns="http://ws.mywebproject.dsestili.it" soapAction="" >
+        <parameter qname="pns:folder" xmlns:pns="http://ws.mywebproject.dsestili.it" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="pns:algorithm" xmlns:pns="http://ws.mywebproject.dsestili.it" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="pns:modeParam" xmlns:pns="http://ws.mywebproject.dsestili.it" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <parameter name="allowedMethods" value="generateAndDownloadHash"/>
+
+      <typeMapping
+        xmlns:ns="http://ws.mywebproject.dsestili.it"
+        qname="ns:Result"
+        type="java:it.dsestili.mywebproject.ws.Result"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <arrayMapping
+        xmlns:ns="http://ws.mywebproject.dsestili.it"
+        qname="ns:ArrayOfFileInfo"
+        type="java:it.dsestili.mywebproject.ws.FileInfo[]"
+        innerType="cmp-ns:FileInfo" xmlns:cmp-ns="http://ws.mywebproject.dsestili.it"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://ws.mywebproject.dsestili.it"
+        qname="ns:FileInfo"
+        type="java:it.dsestili.mywebproject.ws.FileInfo"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+</deployment>

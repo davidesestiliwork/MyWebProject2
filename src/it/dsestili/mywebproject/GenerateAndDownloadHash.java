@@ -63,6 +63,7 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 	
 	protected String algorithm;
 	protected boolean recursive;
+	protected String folder;
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -85,7 +86,6 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 		
 		Properties prop = new Properties();
 		InputStream input = null;
-		String folder = null;
 
 		try
 		{
@@ -250,6 +250,8 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 			fos = new FileOutputStream(temp);
 			bos = new BufferedOutputStream(fos);
 
+			File baseDir = new File(folder);
+			
 			for(File f : files)
 			{
 				logger.debug("Sto generando l'hash code del file " + f.getName());
@@ -261,7 +263,7 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 					core.addIProgressListener(this);
 					String hash = core.generateHash();
 
-					lineOfText = hash + " *" + (recursive ? f.getAbsolutePath() : f.getName()) + "\n";
+					lineOfText = hash + " *" + (recursive ? Utils.getRelativePath(baseDir, f) : f.getName()) + "\n";
 				}
 				catch(FileNotFoundException e)
 				{
