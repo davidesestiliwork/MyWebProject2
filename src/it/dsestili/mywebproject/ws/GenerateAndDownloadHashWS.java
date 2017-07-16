@@ -65,7 +65,7 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 				String hash = core.generateHash();
 
 				info.setHashCode(hash);
-				info.setFileName(Utils.getRelativePath(new File(folder), f));
+				info.setFileName(Utils.getRelativePath(folder, f.getAbsolutePath()));
 			}
 			catch(FileNotFoundException e)
 			{
