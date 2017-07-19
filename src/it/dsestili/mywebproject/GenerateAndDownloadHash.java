@@ -229,8 +229,8 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 
 	protected File getTempFile() throws IOException
 	{
-		String tempFolderPath = System.getProperty("jboss.server.temp.dir");
-		File temp = File.createTempFile("tempfile", ".tmp", new File(tempFolderPath));
+		//String tempFolderPath = System.getProperty("jboss.server.temp.dir"); Removed for compatibility with other application server
+		File temp = File.createTempFile("tempfile", ".tmp"/*, new File(tempFolderPath)*/);
 		return temp;
 	}
 	
