@@ -203,6 +203,8 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 		{
 			try 
 			{
+				Class.forName("com.mysql.jdbc.Driver");
+				
 				String connectionString = getProperty("connectionString");
 				String userName = decodeBase64(getProperty("userName"));
 				String password = decodeBase64(getProperty("password"));
@@ -211,6 +213,10 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 				logger.debug("Connessione riuscita");
 			}
 			catch(SQLException e) 
+			{
+				logger.debug("Errore di connessione", e);
+			} 
+			catch(ClassNotFoundException e) 
 			{
 				logger.debug("Errore di connessione", e);
 			}
