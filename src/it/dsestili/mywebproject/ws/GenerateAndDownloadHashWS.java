@@ -21,10 +21,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,18 +44,20 @@ import it.dsestili.jhashcode.core.DirectoryScannerRecursive;
 import it.dsestili.jhashcode.core.Utils;
 import it.dsestili.jhashcode.ui.MainWindow;
 import it.dsestili.mywebproject.GenerateAndDownloadHash;
+import java.util.Base64;
 
 public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(GenerateAndDownloadHashWS.class);
 
 	private Result r = new Result();
 	private List<FileInfo> infos = new ArrayList<FileInfo>();
 	private String folder;
-
+	
+	private static Connection connection = null;
+	private static final String PROP_FILE_NAME = "config.properties";
+	
 	@Override
 	protected void downloadFile(HttpServletResponse response, DirectoryScanner scanner) throws Throwable {
 		File[] files = getFiles(scanner);
@@ -85,10 +94,137 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 		
 		r.setResult(infos.toArray(new FileInfo[0]));
 	}
+	
+	protected boolean checkToken(String token)
+	{
+		boolean result = false;
+		
+		logger.debug("metodo checkToken()");
 
-	public Result generateAndDownloadHash(String folder, String algorithm, String modeParam)
+		openConnection();
+		
+		try
+		{
+			String getTokenQuery = getProperty("query.getToken");
+			
+			PreparedStatement statement = connection.prepareStatement(getTokenQuery);
+			statement.setString(1, token);
+			ResultSet rs = statement.executeQuery();
+			rs.next();
+			int count = rs.getInt(1);
+			
+			if(count > 0)
+			{
+				String querySetUsedToken = getProperty("query.setUsedToken");
+				
+				statement = connection.prepareStatement(querySetUsedToken);
+				statement.setString(1, token);
+				statement.executeUpdate();
+
+				result = true;
+			}
+		}
+		catch(Exception e)
+		{
+			logger.debug("Errore in getDownloadCounter()", e);
+		}
+		finally
+		{
+			if(connection != null)
+			{
+				try 
+				{
+					connection.close();
+					connection = null;
+					logger.debug("Connessione chiusa");
+				} 
+				catch(SQLException e) 
+				{
+					logger.debug("Errore di chiusura connessione", e);
+				}
+			}
+		}
+		
+		logger.debug("Token " + (result ? "valido" : "NON valido"));
+		return result;
+	}
+	
+	public static String getProperty(String key)
+	{
+		Properties prop = new Properties();
+		InputStream input = null;
+		String value = null;
+
+		try
+		{
+			String propFileName = PROP_FILE_NAME;
+			input = Utils.class.getClassLoader().getResourceAsStream(propFileName);
+			
+			if(input == null) 
+			{
+				logger.debug("File di properties non trovato " + propFileName);
+				return null;
+			}
+
+			prop.load(input);
+			value = prop.getProperty(key);
+		}
+		catch(IOException ex)
+		{
+			logger.debug("Errore di lettura dal file di properties", ex);
+		}
+		finally
+		{
+			if (input != null) 
+			{
+				try 
+				{
+					input.close();
+				} 
+				catch(IOException e) 
+				{
+					logger.debug("Errore di chiusura input stream", e);
+				}
+			}
+		}
+		
+		return value;
+	}
+
+	public static String decodeBase64(String enc)
+	{
+		byte[] decodedBytes = Base64.getDecoder().decode(enc);
+		return new String(decodedBytes);
+	}
+
+	public static void openConnection()
+	{
+		if(connection == null)
+		{
+			try 
+			{
+				String connectionString = getProperty("connectionString");
+				String userName = decodeBase64(getProperty("userName"));
+				String password = decodeBase64(getProperty("password"));
+				
+				connection = DriverManager.getConnection(connectionString, userName, password);
+				logger.debug("Connessione riuscita");
+			}
+			catch(SQLException e) 
+			{
+				logger.debug("Errore di connessione", e);
+			}
+		}
+	}
+
+	public Result generateAndDownloadHash(String folder, String algorithm, String modeParam, String token)
 	{
 		long start = System.currentTimeMillis();
+		
+		if(!checkToken(token))
+		{
+			return r;
+		}
 		
 		MainWindow.setItalianLocale();
 	

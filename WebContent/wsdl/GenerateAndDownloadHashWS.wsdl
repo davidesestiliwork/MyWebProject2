@@ -10,6 +10,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
       <element name="folder" type="xsd:string"/>
       <element name="algorithm" type="xsd:string"/>
       <element name="modeParam" type="xsd:string"/>
+      <element name="token" type="xsd:string"/>
      </sequence>
     </complexType>
    </element>

@@ -24,6 +24,7 @@
         <parameter qname="pns:folder" xmlns:pns="http://ws.mywebproject.dsestili.it" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
         <parameter qname="pns:algorithm" xmlns:pns="http://ws.mywebproject.dsestili.it" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
         <parameter qname="pns:modeParam" xmlns:pns="http://ws.mywebproject.dsestili.it" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="pns:token" xmlns:pns="http://ws.mywebproject.dsestili.it" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
       </operation>
       <parameter name="allowedMethods" value="generateAndDownloadHash"/>
 
