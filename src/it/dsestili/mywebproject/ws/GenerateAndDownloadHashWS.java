@@ -139,7 +139,7 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 				e1.printStackTrace();
 			}
 			
-			logger.debug("Errore in getDownloadCounter()", e);
+			logger.debug("Errore in checkToken()", e);
 		}
 		finally
 		{
