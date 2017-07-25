@@ -149,7 +149,7 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 		return result;
 	}
 	
-	public static String getProperty(String key)
+	protected static String getProperty(String key)
 	{
 		Properties prop = new Properties();
 		InputStream input = null;
@@ -191,13 +191,13 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 		return value;
 	}
 
-	public static String decodeBase64(String enc)
+	protected static String decodeBase64(String enc)
 	{
 		byte[] decodedBytes = Base64.getDecoder().decode(enc);
 		return new String(decodedBytes);
 	}
 
-	public static void openConnection()
+	protected static void openConnection()
 	{
 		if(connection == null)
 		{
