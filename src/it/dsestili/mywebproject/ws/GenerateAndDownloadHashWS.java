@@ -105,6 +105,8 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 		
 		try
 		{
+			connection.setAutoCommit(false);
+			
 			String getTokenQuery = getProperty("query.getToken");
 			
 			PreparedStatement statement = connection.prepareStatement(getTokenQuery);
@@ -123,9 +125,20 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 
 				result = true;
 			}
+			
+			connection.commit();
 		}
 		catch(Exception e)
 		{
+			try 
+			{
+				connection.rollback();
+			} 
+			catch(SQLException e1) 
+			{
+				e1.printStackTrace();
+			}
+			
 			logger.debug("Errore in getDownloadCounter()", e);
 		}
 		finally
@@ -169,9 +182,9 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 			prop.load(input);
 			value = prop.getProperty(key);
 		}
-		catch(IOException ex)
+		catch(IOException e)
 		{
-			logger.debug("Errore di lettura dal file di properties", ex);
+			logger.debug("Errore di lettura dal file di properties", e);
 		}
 		finally
 		{
