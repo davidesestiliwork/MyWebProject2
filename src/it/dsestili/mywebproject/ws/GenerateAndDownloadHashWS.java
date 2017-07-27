@@ -236,6 +236,56 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 		}
 	}
 
+	protected boolean isAllowed(String token, String folder)
+	{
+		boolean result = false;
+		
+		logger.debug("metodo isAllowed()");
+		
+		openConnection();
+		
+		String baseDir = null;
+		try
+		{
+			String queryGetBaseDir = getProperty("query.getBaseDir");
+			
+			PreparedStatement statement = connection.prepareStatement(queryGetBaseDir);
+			statement.setString(1, token);
+			ResultSet rs = statement.executeQuery();
+			rs.next();
+			baseDir = rs.getString(1);
+			
+			if(folder.startsWith(baseDir))
+			{
+				result = true;
+			}
+		}
+		catch(Exception e)
+		{
+			logger.debug(e);
+		}
+		finally
+		{
+			if(connection != null)
+			{
+				try 
+				{
+					connection.close();
+					connection = null;
+					logger.debug("Connessione chiusa");
+				} 
+				catch(SQLException e) 
+				{
+					logger.debug("Errore di chiusura connessione", e);
+				}
+			}
+		}
+
+		logger.debug("baseDir: " + baseDir);
+		logger.debug("Allowed: " + (result ? "Yes" : "No"));
+		return result;
+	}
+	
 	public Result generateAndDownloadHash(String folder, String algorithm, String modeParam, String token)
 	{
 		long start = System.currentTimeMillis();
@@ -245,8 +295,6 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 			return r;
 		}
 		
-		MainWindow.setItalianLocale();
-	
 		this.algorithm = algorithm;
 		this.folder = folder;
 		
@@ -269,6 +317,12 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 		}
 		
 		logger.debug("Folder: " + folder);
+
+		if(!isAllowed(token, folder))
+		{
+			return r;
+		}
+
 		File directory = new File(folder);
 		if(!directory.exists())
 		{
@@ -291,6 +345,8 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 
 		DirectoryScanner scanner = null;
 
+		MainWindow.setItalianLocale();
+		
 		if(modeParam != null && modeParam.trim().equals("not-recursive"))
 		{
 			try
