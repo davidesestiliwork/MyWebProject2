@@ -1,5 +1,3 @@
-package it.dsestili.mywebproject.ws;
-
 /*
 GenerateAndDownloadHashWS
 Copyright (C) 2017 Davide Sestili
@@ -17,6 +15,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+package it.dsestili.mywebproject.ws;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -55,7 +55,7 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 	private List<FileInfo> infos = new ArrayList<FileInfo>();
 	private String folder;
 	
-	private static Connection connection = null;
+	private Connection connection = null;
 	private static final String PROP_FILE_NAME = "config.properties";
 	
 	@Override
@@ -162,7 +162,7 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 		return result;
 	}
 	
-	protected static String getProperty(String key)
+	protected String getProperty(String key)
 	{
 		Properties prop = new Properties();
 		InputStream input = null;
@@ -204,13 +204,13 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 		return value;
 	}
 
-	protected static String decodeBase64(String enc)
+	protected String decodeBase64(String enc)
 	{
 		byte[] decodedBytes = Base64.getDecoder().decode(enc);
 		return new String(decodedBytes);
 	}
 
-	protected static void openConnection()
+	protected void openConnection()
 	{
 		if(connection == null)
 		{
