@@ -83,6 +83,7 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 		String modeParam = (String)request.getParameter(MODE_PARAM);
 
 		MainWindow.setItalianLocale();
+		MainWindow.setExcludeSymbolicLinks(true);
 		
 		Properties prop = new Properties();
 		InputStream input = null;
@@ -321,8 +322,19 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 		DirectoryInfo di = scanner.getFiles();
 		File[] files = di.getFiles();
 		long totalSize = di.getTotalSize();
+		int symbolicLinkExcluded = di.getSymbolicLinksExcluded();
 		
 		logger.debug("Scanning completed, " + files.length + " files found, " + totalSize + " bytes total size");
+		
+		if(symbolicLinkExcluded > 0)
+		{
+			logger.debug(symbolicLinkExcluded + " symbolic link excluded");
+		}
+		else
+		{
+			logger.debug("No symbolic link excluded");
+		}
+		
 		return files;
 	}
 	

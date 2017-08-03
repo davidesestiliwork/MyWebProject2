@@ -346,6 +346,7 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 		DirectoryScanner scanner = null;
 
 		MainWindow.setItalianLocale();
+		MainWindow.setExcludeSymbolicLinks(true);
 		
 		if(modeParam != null && modeParam.trim().equals("not-recursive"))
 		{
