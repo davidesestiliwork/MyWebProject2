@@ -59,7 +59,8 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 	private static final String PROP_FILE_NAME = "config.properties";
 	
 	@Override
-	protected void downloadFile(HttpServletResponse response, DirectoryScanner scanner) throws Throwable {
+	protected void downloadFile(HttpServletResponse response, DirectoryScanner scanner) throws Throwable 
+	{
 		File[] files = getFiles(scanner);
 
 		for(File f : files)

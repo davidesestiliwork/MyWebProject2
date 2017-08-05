@@ -29,6 +29,9 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -64,6 +67,8 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 	protected String algorithm;
 	protected boolean recursive;
 	protected String folder;
+	
+	protected static final int BUFFER_SIZE = 128 * 1024;
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -202,15 +207,88 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 	{
 		File[] files = getFiles(scanner);
 		File temp = generateTempFile(files);
-		byte[] data = getDataFromFile(temp.getAbsolutePath());
+		File zipFile = generateZipFile(temp.getAbsolutePath());
+		byte[] data = getDataFromFile(zipFile.getAbsolutePath());
 		
-		response.setContentType("text/plain");
-		String fileName = algorithm.replace("-", "").toUpperCase() + "SUMS";
+		response.setContentType("application/x-zip");
+		String fileName = algorithm.replace("-", "").toUpperCase() + "SUMS.zip";
 		response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\"");
 	    response.setHeader("Cache-Control", "no-cache");
 	    response.setHeader("Expires", "-1");
 	    
 	    response.getOutputStream().write(data);
+	}
+
+	protected File generateZipFile(String tempFilePath) throws Throwable
+	{
+		File zipFile = File.createTempFile("tempfile", ".zip");
+
+		logger.debug("generateZipFile() - tempFilePath: " + tempFilePath);
+		logger.debug("generateZipFile() - zipFilePath: " + zipFile.getAbsolutePath());
+
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
+		ZipOutputStream out = null;
+		
+		try
+		{
+			fos = new FileOutputStream(zipFile.getAbsolutePath());
+			bos = new BufferedOutputStream(fos);
+			out = new ZipOutputStream(bos);
+
+			String fileName = algorithm.replace("-", "").toUpperCase() + "SUMS";
+			addEntry(fileName, tempFilePath, out);
+
+			logger.debug("signing " + tempFilePath);
+			int exitCode = Utils.gpgSignFile(tempFilePath);
+			if(exitCode == 0)
+			{
+				logger.debug("file signed successfully");
+				fileName = fileName + ".asc";
+				String signedFilePath = tempFilePath + ".asc";
+				addEntry(fileName, signedFilePath, out);
+			}
+			else
+			{
+				logger.debug("error signing file");
+			}
+		}
+		finally
+		{
+			out.close();
+		}
+
+		return zipFile;
+	}
+
+	protected void addEntry(String fileName, String filePath, ZipOutputStream out) throws Throwable
+	{
+		logger.debug("addEntry() - fileName: " + fileName);
+		logger.debug("addEntry() - filePath: " + filePath);
+
+		byte buf[] = new byte[BUFFER_SIZE];
+		
+		FileInputStream fis = null;
+		BufferedInputStream bis = null;
+
+		try
+		{
+			fis = new FileInputStream(filePath);
+			bis = new BufferedInputStream(fis);
+			ZipEntry entry = new ZipEntry(fileName);
+			out.putNextEntry(entry);
+
+			int len;
+			while((len = bis.read(buf, 0, buf.length)) != -1)
+			{
+			   out.write(buf, 0, len);
+			}
+		}
+		finally
+		{
+			bis.close();
+			logger.debug("addEntry() - stream closed");
+		}
 	}
 
 	//restituisce un array di byte leggendo da un file in input
