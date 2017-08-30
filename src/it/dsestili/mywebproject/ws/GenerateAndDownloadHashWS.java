@@ -55,7 +55,7 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 	private List<FileInfo> infos = new ArrayList<FileInfo>();
 	private String folder;
 	
-	private Connection connection = null;
+	protected Connection connection = null;
 	private static final String PROP_FILE_NAME = "config.properties";
 	
 	@Override
