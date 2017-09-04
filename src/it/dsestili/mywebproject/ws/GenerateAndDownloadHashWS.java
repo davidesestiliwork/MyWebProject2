@@ -126,6 +126,13 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 
 				result = true;
 			}
+
+			/*
+			if(true)
+			{
+				throw new Exception("test sql transaction");
+			}
+			*/
 			
 			connection.commit();
 		}
