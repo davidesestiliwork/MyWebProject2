@@ -65,7 +65,7 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 
 		for(File f : files)
 		{
-			logger.debug("Sto generando l'hash code del file " + f.getName());
+			fileName = f.getName();
 
 			FileInfo info = new FileInfo();
 			try
@@ -131,6 +131,8 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 		}
 		catch(Exception e)
 		{
+			result = false;
+			
 			try 
 			{
 				connection.rollback();

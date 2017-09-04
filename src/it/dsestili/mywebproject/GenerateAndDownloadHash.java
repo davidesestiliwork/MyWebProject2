@@ -70,6 +70,8 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 	
 	protected static final int BUFFER_SIZE = 128 * 1024;
 	
+	protected String fileName;
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -333,8 +335,8 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 			
 			for(File f : files)
 			{
-				logger.debug("Sto generando l'hash code del file " + f.getName());
-
+				fileName = f.getName();
+				
 				String lineOfText = null;
 				try
 				{
@@ -433,6 +435,6 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 	@Override
 	public void progressEvent(ProgressEvent event) 
 	{
-		logger.debug(event.toString());
+		logger.debug(fileName + " " + event.toString());
 	}
 }
