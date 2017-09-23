@@ -252,7 +252,7 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 			}
 			else
 			{
-				logger.debug("error signing file");
+				logger.debug("error signing file, exitCode: " + exitCode);
 			}
 		}
 		finally
