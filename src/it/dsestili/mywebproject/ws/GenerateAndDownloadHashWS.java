@@ -357,6 +357,7 @@ public class GenerateAndDownloadHashWS extends GenerateAndDownloadHash {
 
 		MainWindow.setItalianLocale();
 		MainWindow.setExcludeSymbolicLinks(true);
+		MainWindow.setExcludeHiddenFiles(true);
 		
 		if(modeParam != null && modeParam.trim().equals("not-recursive"))
 		{

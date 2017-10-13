@@ -91,6 +91,7 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 
 		MainWindow.setItalianLocale();
 		MainWindow.setExcludeSymbolicLinks(true);
+		MainWindow.setExcludeHiddenFiles(true);
 		
 		Properties prop = new Properties();
 		InputStream input = null;
