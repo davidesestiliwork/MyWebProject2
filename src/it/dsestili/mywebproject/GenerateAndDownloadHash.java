@@ -403,22 +403,17 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 		DirectoryInfo di = scanner.getFiles();
 		File[] files = di.getFiles();
 		long totalSize = di.getTotalSize();
-		int symbolicLinkExcluded = di.getSymbolicLinksExcluded();
 		
 		logger.debug("Scanning completed, " + files.length + " files found, " + totalSize + " bytes total size");
 		
-		if(symbolicLinkExcluded > 0)
+		if(di.getSymbolicLinksExcluded() > 0 || di.getHiddenFilesExcluded() > 0)
 		{
-			logger.debug(symbolicLinkExcluded + " symbolic link excluded");
-		}
-		else
-		{
-			logger.debug("No symbolic link excluded");
+			logger.debug(di.getSymbolicLinksExcluded() + " symbolic link excluded, " + di.getHiddenFilesExcluded() + " hidden files excluded");
 		}
 		
 		return files;
 	}
-	
+
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
