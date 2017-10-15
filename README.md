@@ -11,5 +11,6 @@ New in release 2:
 - Use a relative path instead of an absolute path
 - Don't save a temporary file when calling SOAP Web Service
 - Can exclude symbolic links
+- Can exclude hidden files
 - Use a security token (UUID) when calling SOAP Web Service
 - The downloaded file is a zip file containing checksum and gpg signature
