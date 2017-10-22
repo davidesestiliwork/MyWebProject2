@@ -63,11 +63,15 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 	private static final String FOLDER = "folder";
 	private static final String ALGORITHM = "algorithm";
 	private static final String WARNING_MESSAGE = "Warning: ";
+	private static final String SERVLET_ENABLED = "servlet-enabled";
+	private static final String EXCLUDE_SYMBOLIC_LINKS = "exclude-symbolic-links";
+	private static final String EXCLUDE_HIDDEN_FILES = "exclude-hidden-files";
 	
 	protected String algorithm;
 	protected boolean recursive;
 	protected String folder;
-	
+	protected String servletEnabled, excludeSymbolicLinks, excludeHiddenFiles;
+
 	protected static final int BUFFER_SIZE = 128 * 1024;
 	
 	protected String fileName;
@@ -89,10 +93,6 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 		
 		String modeParam = (String)request.getParameter(MODE_PARAM);
 
-		MainWindow.setItalianLocale();
-		MainWindow.setExcludeSymbolicLinks(true);
-		MainWindow.setExcludeHiddenFiles(true);
-		
 		Properties prop = new Properties();
 		InputStream input = null;
 
@@ -109,6 +109,9 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 			prop.load(input);
 			folder = prop.getProperty(FOLDER);
 			algorithm = prop.getProperty(ALGORITHM);
+			servletEnabled = prop.getProperty(SERVLET_ENABLED);
+			excludeSymbolicLinks = prop.getProperty(EXCLUDE_SYMBOLIC_LINKS);
+			excludeHiddenFiles = prop.getProperty(EXCLUDE_HIDDEN_FILES);
 		}
 		catch(IOException ex)
 		{
@@ -128,7 +131,27 @@ public class GenerateAndDownloadHash extends HttpServlet implements IProgressLis
 				}
 			}
 		}
+
+		if(!Boolean.parseBoolean(servletEnabled))
+		{
+			logger.debug("Servlet is NOT enabled");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Servlet is not enabled");
+			return;
+		}
+		else
+		{
+			logger.debug("Servlet is enabled");
+		}
+
+		logger.debug("Setting italian locale");
+		MainWindow.setItalianLocale();
 		
+		logger.debug("Exclude symbolic links: " + excludeSymbolicLinks);
+		MainWindow.setExcludeSymbolicLinks(Boolean.parseBoolean(excludeSymbolicLinks));
+		
+		logger.debug("Exclude hidden files: " + excludeHiddenFiles);
+		MainWindow.setExcludeHiddenFiles(Boolean.parseBoolean(excludeHiddenFiles));
+
 		logger.debug("Folder: " + folder);
 		File directory = new File(folder);
 		if(!directory.exists())
